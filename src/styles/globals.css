@@ -263,3 +263,11 @@ html {
     rgba(220, 38, 38, 0.2)
   );
 }
+
+.milky-image img {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+  margin: 2rem 0;
+}

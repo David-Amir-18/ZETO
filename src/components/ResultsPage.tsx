@@ -51,35 +51,35 @@ function ResultsPage() {
     switch (type) {
       case "confirmed":
         return {
+          glowColor: "0 0 30px rgba(34, 197, 94, 0.5)",
+          particleColor: "bg-green-400",
+          title: "CONFIRMED EXOPLANET",
           icon: "🌍",
           color: "linear-gradient(to right, #4ADE80, #059669)",
           bgColor: " bg-green-500/20 ",
-          borderColor: " border-green-400 ",
-          glowColor: "0 0 30px rgba(34, 197, 94, 0.5)",
-          particleColor: "bg-green-400",
+          borderColor: " var(--color-green-400) ",
           description: "High confidence detection of a genuine exoplanet!",
-          title: "CONFIRMED EXOPLANET",
         };
       case "candidate":
         return {
-          glowColor: "0 0 30px rgba(0, 0, 0, 0.5)",
-          particleColor: "bg-yellow-400",
-          title: "EXOPLANET CANDIDATE",
-          color: "linear-gradient(to right, #FBBF24, #F97316)",
-          bgColor:
-            "linear-gradient(to right, rgba(248, 113, 113, 0.2), rgba(220, 38, 38, 0.2));",
-          borderColor: "var(--color-yellow-400)",
-          icon: "🪐",
-          description: "Promising signal requires additional verification.",
+          glowColor: "0 0 30px rgba(34, 197, 94, 0.5)",
+          particleColor: "bg-green-400",
+          title: "CONFIRMED EXOPLANET",
+          icon: "🌍",
+          color: "linear-gradient(to right, #4ADE80, #059669)",
+          bgColor: " bg-green-500/20 ",
+          borderColor: " var(--color-green-400) ",
+          description: "High confidence detection of a genuine exoplanet!",
         };
       case "false_positive":
         return {
           glowColor: "0 0 30px rgba(239, 68, 68, 0.5)",
           particleColor: "bg-red-400",
           title: "FALSE POSITIVE",
-          color: "linear-gradient(to right, #F87171, #DC2626);",
+          color:
+            "linear-gradient(to right, rgb(248, 113, 113), rgb(220, 38, 38))",
           bgColor: "bg-red-500/20",
-          borderColor: "border-red-400",
+          borderColor: "var(--color-red-400)",
           icon: "❌",
           description: "Signal likely caused by stellar activity or noise.",
         };
@@ -158,13 +158,10 @@ function ResultsPage() {
           transition={{ duration: 0.6, delay: 0.4 }}
         >
           <Card
-            className={`border-2 bg-clear-yellow ${config.borderColor} border-2 p-8 mb-6`}
+            className={`border-2  ${config.borderColor} border-2 p-8 mb-6`}
             style={{
               borderColor: config.borderColor,
               borderRadius: "20px",
-              backgroundImage:
-                "linear-gradient(to right, rgba(248, 113, 113, 0.8), rgba(220, 38, 38, 0.8)); !important",
-              width: "100%",
             }}
           >
             <div className="grid md:grid-cols-2 gap-8">

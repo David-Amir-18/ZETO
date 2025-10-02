@@ -18,8 +18,8 @@ interface AnalysisResult {
 
 // API Configuration - Developer can update these values
 const API_CONFIG = {
-  enabled: false, // Set to true when backend is ready
-  endpoint: "/api/analyze", // Backend API endpoint
+  enabled: true, // Set to true when backend is ready
+  endpoint: "https://exotopians.up.railway.app//api/analyze", // Backend API endpoint
   timeout: 30000, // Request timeout in milliseconds
 };
 
@@ -93,8 +93,14 @@ function AnalysisPage() {
         // ===== BACKEND API CALL =====
         // Developer: Uncomment and configure when backend is ready
         result = await callBackendAPI(parameters);
+        console.log(result);
+        console.log("Received analysis result from backend API");
+        
       } else {
+        
         // ===== MOCK DATA (for testing) =====
+        console.log("Using mock analysis result");
+
         result = generateMockResult(parameters);
       }
 

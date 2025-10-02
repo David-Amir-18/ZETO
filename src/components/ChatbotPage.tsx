@@ -218,9 +218,6 @@ function ChatbotPage() {
   };
 
   const askNextQuestion = () => {
-    console.log(`current question is: ${currentQuestion}`);
-    console.log(`current questions length is: ${questions.length}`);
-
     if (currentQuestion < questions.length) {
       const question = questions[currentQuestion];
 
