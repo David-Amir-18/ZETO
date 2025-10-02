@@ -1,100 +1,128 @@
-import { motion } from 'motion/react'
-import { useLocation, useNavigate } from 'react-router-dom'
-import { CheckCircle, AlertTriangle, XCircle, RotateCcw, Home, Download } from 'lucide-react'
-import { useState } from 'react'
+import { motion } from "motion/react";
+import { useLocation, useNavigate } from "react-router-dom";
+import {
+  CheckCircle,
+  AlertTriangle,
+  XCircle,
+  RotateCcw,
+  Home,
+  Download,
+} from "lucide-react";
+import { useState } from "react";
+import { Button } from "./ui/button";
+import { Card } from "./ui/card";
+import { Badge } from "./ui/badge";
+import "../index.css";
 
 interface Result {
-  type: 'confirmed' | 'candidate' | 'false_positive'
-  confidence: number
-  title: string
-  description: string
+  type: "confirmed" | "candidate" | "false_positive";
+  confidence: number;
+  title: string;
+  description: string;
 }
 
 interface ResultConfig {
-  icon: JSX.Element
-  color: string
-  bgColor: string
-  borderColor: string
-  glowColor: string
-  particleColor: string
+  icon: string;
+  color: string;
+  bgColor: string;
+  borderColor: string;
+  glowColor: string;
+  particleColor: string;
+  description: string;
+  title?: string;
 }
 
 function ResultsPage() {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const { result, parameters }: { result?: Result; parameters?: Record<string, any> } = location.state || {}
-  const [showDetails, setShowDetails] = useState(false)
+  const location = useLocation();
+  const navigate = useNavigate();
+  const {
+    result,
+    parameters,
+  }: { result?: Result; parameters?: Record<string, any> } =
+    location.state || {};
+  const [showDetails, setShowDetails] = useState(false);
 
   if (!result) {
-    navigate('/detection')
-    return null
+    navigate("/detection");
+    return null;
   }
 
   const getResultConfig = (type: string): ResultConfig => {
     switch (type) {
-      case 'confirmed':
+      case "confirmed":
         return {
-          icon: <CheckCircle className="w-16 h-16" />,
-          color: 'from-green-400 to-cyan-400',
-          bgColor: 'from-green-900/20 to-cyan-900/20',
-          borderColor: 'border-green-400/50',
-          glowColor: '0 0 30px rgba(34, 197, 94, 0.5)',
-          particleColor: 'bg-green-400'
-        }
-      case 'candidate':
+          icon: "🌍",
+          color: "linear-gradient(to right, #4ADE80, #059669)",
+          bgColor: " bg-green-500/20 ",
+          borderColor: " border-green-400 ",
+          glowColor: "0 0 30px rgba(34, 197, 94, 0.5)",
+          particleColor: "bg-green-400",
+          description: "High confidence detection of a genuine exoplanet!",
+          title: "CONFIRMED EXOPLANET",
+        };
+      case "candidate":
         return {
-          icon: <AlertTriangle className="w-16 h-16" />,
-          color: 'from-yellow-400 to-orange-400',
-          bgColor: 'from-yellow-900/20 to-orange-900/20',
-          borderColor: 'border-yellow-400/50',
-          glowColor: '0 0 30px rgba(251, 191, 36, 0.5)',
-          particleColor: 'bg-yellow-400'
-        }
-      case 'false_positive':
+          glowColor: "0 0 30px rgba(0, 0, 0, 0.5)",
+          particleColor: "bg-yellow-400",
+          title: "EXOPLANET CANDIDATE",
+          color: "linear-gradient(to right, #FBBF24, #F97316)",
+          bgColor:
+            "linear-gradient(to right, rgba(248, 113, 113, 0.2), rgba(220, 38, 38, 0.2));",
+          borderColor: "var(--color-yellow-400)",
+          icon: "🪐",
+          description: "Promising signal requires additional verification.",
+        };
+      case "false_positive":
         return {
-          icon: <XCircle className="w-16 h-16" />,
-          color: 'from-red-400 to-pink-400',
-          bgColor: 'from-red-900/20 to-pink-900/20',
-          borderColor: 'border-red-400/50',
-          glowColor: '0 0 30px rgba(239, 68, 68, 0.5)',
-          particleColor: 'bg-red-400'
-        }
+          glowColor: "0 0 30px rgba(239, 68, 68, 0.5)",
+          particleColor: "bg-red-400",
+          title: "FALSE POSITIVE",
+          color: "linear-gradient(to right, #F87171, #DC2626);",
+          bgColor: "bg-red-500/20",
+          borderColor: "border-red-400",
+          icon: "❌",
+          description: "Signal likely caused by stellar activity or noise.",
+        };
       default:
         return {
-          icon: <AlertTriangle className="w-16 h-16" />,
-          color: 'from-gray-400 to-gray-600',
-          bgColor: 'from-gray-900/20 to-gray-800/20',
-          borderColor: 'border-gray-400/50',
-          glowColor: '0 0 30px rgba(107, 114, 128, 0.5)',
-          particleColor: 'bg-gray-400'
-        }
+          icon: "⁉️",
+          color: "linear-gradient(to right, #9CA3AF, #4B5563)",
+          bgColor: "from-gray-900/20 to-gray-800/20",
+          borderColor: "border-gray-400/50",
+          glowColor: "0 0 30px rgba(107, 114, 128, 0.5)",
+          particleColor: "bg-gray-400",
+          description: "ERROR: Unknown result type.",
+          title: "UNKNOWN RESULT",
+        };
     }
-  }
+  };
 
-  const config = getResultConfig(result.type)
+  const config = getResultConfig(result.type);
 
   const exportResults = () => {
     const exportData = {
       result,
       parameters,
       timestamp: new Date().toISOString(),
-      analysis_id: `EXO-${Date.now()}`
-    }
-    
-    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `exoplanet_analysis_${exportData.analysis_id}.json`
-    a.click()
-    URL.revokeObjectURL(url)
-  }
+      analysis_id: `EXO-${Date.now()}`,
+    };
+
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `exoplanet_analysis_${exportData.analysis_id}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 p-6">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <motion.div
+        {/* <motion.div
           className="text-center mb-8"
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
@@ -104,95 +132,151 @@ function ResultsPage() {
             Analysis Complete
           </h1>
           <p className="text-xl text-gray-300">Detection results are ready</p>
+        </motion.div> */}
+
+        {/* Header */}
+        <motion.div
+          className="text-center mb-8"
+          initial={{ scale: 0.8 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
+          <div className="text-6xl mb-4">{config.icon}</div>
+          <h1
+            className={`text-4xl mb-4 bg-gradient-to-r  bg-clip-text text-transparent`}
+            style={{ backgroundImage: config.color }}
+          >
+            {config.title}
+          </h1>
+          <p className="text-xl text-gray-300">{config.description}</p>
         </motion.div>
 
-        {/* Main Result Card */}
+        {/* Main result card */}
         <motion.div
-          className={`relative bg-gradient-to-br ${config.bgColor} backdrop-blur-sm rounded-2xl p-8 border ${config.borderColor} mb-8 overflow-hidden`}
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1, delay: 0.3 }}
-          style={{ boxShadow: config.glowColor }}
+          transition={{ duration: 0.6, delay: 0.4 }}
         >
-          {/* Animated background pattern */}
-          <div className="absolute inset-0 opacity-10">
-            {[...Array(20)].map((_, i) => (
-              <motion.div
-                key={i}
-                className={`absolute w-2 h-2 ${config.particleColor} rounded-full`}
-                style={{
-                  left: `${Math.random() * 100}%`,
-                  top: `${Math.random() * 100}%`,
-                }}
-                animate={{
-                  y: [0, -30, 0],
-                  opacity: [0.3, 1, 0.3],
-                }}
-                transition={{
-                  duration: 3 + Math.random() * 2,
-                  repeat: Infinity,
-                  delay: Math.random() * 2,
-                }}
-              />
-            ))}
-          </div>
+          <Card
+            className={`border-2 bg-clear-yellow ${config.borderColor} border-2 p-8 mb-6`}
+            style={{
+              borderColor: config.borderColor,
+              borderRadius: "20px",
+              backgroundImage:
+                "linear-gradient(to right, rgba(248, 113, 113, 0.8), rgba(220, 38, 38, 0.8)); !important",
+              width: "100%",
+            }}
+          >
+            <div className="grid md:grid-cols-2 gap-8">
+              {/* Left column - Key metrics */}
+              <div>
+                <h3 className="text-2xl text-white mb-6">Detection Analysis</h3>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-300">Confidence Level:</span>
+                    <Badge
+                      className={`bg-gradient-to-r rounded-full text-white px-4 py-1`}
+                      style={{ backgroundImage: config.color }}
+                    >
+                      {result.confidence.toFixed(1)}%
+                    </Badge>
+                  </div>
 
-          <div className="relative z-10">
-            {/* Result Icon and Title */}
-            <div className="text-center mb-6">
-              <motion.div
-                className={`inline-flex items-center justify-center mb-4 text-transparent bg-clip-text bg-gradient-to-r ${config.color}`}
-                animate={{ 
-                  scale: [1, 1.1, 1],
-                  rotateY: [0, 360, 0]
-                }}
-                transition={{ duration: 3, repeat: Infinity }}
-              >
-                {config.icon}
-              </motion.div>
-              
-              <motion.h2
-                className={`text-3xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r ${config.color}`}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
-              >
-                {result.title}
-              </motion.h2>
-              
-              <motion.p
-                className="text-lg text-gray-300"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.7 }}
-              >
-                {result.description}
-              </motion.p>
-            </div>
+                  {/* put the planet radius here, but update the REsult interface first here and in the analysis */}
+                  {/*<div className="flex justify-between items-center">
+                      <span className="text-gray-300">Planet Radius:</span>
+                      <span className="text-white">
+                        {result.planetRadius.toFixed(3)} R⊕
+                      </span>
+                    </div> */}
 
-            {/* Confidence Score */}
-            <motion.div
-              className="text-center mb-6"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.9 }}
-            >
-              <div className="text-6xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">
-                {Math.round(result.confidence)}%
+                  {/* same here with the habitability score */}
+                  {/* <div className="flex justify-between items-center">
+                    <span className="text-gray-300">Habitability Score:</span>
+                    <div className="flex items-center">
+                      <span className="text-white mr-2">
+                        {result.habitabilityScore.toFixed(0)}%
+                      </span>
+                      <div className="w-20 h-2 bg-gray-700 rounded-full">
+                        <motion.div
+                          className="h-full bg-gradient-to-r from-green-400 to-blue-500 rounded-full"
+                          initial={{ width: 0 }}
+                          animate={{ width: `${result.habitabilityScore}%` }}
+                          transition={{ duration: 1, delay: 0.8 }}
+                        />
+                      </div>
+                    </div>
+                  </div> */}
+                </div>
               </div>
-              <div className="text-gray-400">Confidence Level</div>
-              
-              {/* Animated confidence bar */}
-              <div className="w-full max-w-md mx-auto mt-4 bg-gray-700 rounded-full h-3 overflow-hidden">
+
+              {/* Right column - Visual representation */}
+              <div className="flex flex-col items-center justify-center">
                 <motion.div
-                  className={`h-full bg-gradient-to-r ${config.color} rounded-full`}
-                  initial={{ width: '0%' }}
-                  animate={{ width: `${result.confidence}%` }}
-                  transition={{ duration: 2, delay: 1 }}
-                />
+                  className="relative w-40 h-40 mb-8"
+                  style={{ width: "150px", height: "150px" }}
+                  animate={{ rotate: 360 }}
+                  transition={{
+                    duration: 20,
+                    repeat: Infinity,
+                    ease: "linear",
+                  }}
+                >
+                  <div
+                    className={`w-full h-full rounded-full shadow-2xl`}
+                    style={{
+                      backgroundImage: config.color,
+                      width: "100%",
+                      height: "100%",
+                      zIndex: "10",
+                    }}
+                  >
+                    {/* Planet surface details */}
+                    <div
+                      className="absolute inset-4 bg-gradient-to-br from-gray-600 to-gray-800 rounded-full opacity-30"
+                      style={{
+                        width: "80%",
+                        height: "80%",
+                        backgroundImage:
+                          "linear-gradient(to right, #9CA3AF, #4B5563)",
+                        top: "10%",
+                        left: "10%",
+                      }}
+                    />
+                    <div className="absolute top-5 right-5 w-6 h-6 bg-gray-400 rounded-full opacity-40" />
+                    <div className="absolute bottom-12 left-12 w-4 h-4 bg-gray-500 rounded-full opacity-40" />
+                  </div>
+
+                  {/* Orbital ring */}
+                  <motion.div
+                    className="absolute -inset-8 border-2 border-cyan-400/30 rounded-full"
+                    animate={{ rotate: -360 }}
+                    transition={{
+                      duration: 30,
+                      repeat: Infinity,
+                      ease: "linear",
+                    }}
+                  />
+                </motion.div>
+
+                <motion.div
+                  className={`text-center p-4 bg-gradient-to-r ${config.color} rounded-lg text-white`}
+                  style={{ backgroundImage: config.color }}
+                  animate={{
+                    boxShadow: [
+                      "0 0 20px rgba(59, 130, 246, 0.3)",
+                      "0 0 30px rgba(59, 130, 246, 0.6)",
+                      "0 0 20px rgba(59, 130, 246, 0.3)",
+                    ],
+                  }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                >
+                  <div className="text-sm opacity-90">Classification</div>
+                  <div className="text-lg">{result.type.toUpperCase()}</div>
+                </motion.div>
               </div>
-            </motion.div>
-          </div>
+            </div>
+          </Card>
         </motion.div>
 
         {/* Action Buttons */}
@@ -227,7 +311,7 @@ function ResultsPage() {
           </motion.button>
 
           <motion.button
-            onClick={() => navigate('/detection')}
+            onClick={() => navigate("/detection")}
             className="bg-gray-800/80 hover:bg-gray-700/80 border border-cyan-500/30 hover:border-cyan-400/50 rounded-lg p-4 transition-all duration-200"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
@@ -239,7 +323,7 @@ function ResultsPage() {
           </motion.button>
 
           <motion.button
-            onClick={() => navigate('/')}
+            onClick={() => navigate("/")}
             className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 rounded-lg p-4 transition-all duration-200"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
@@ -256,15 +340,19 @@ function ResultsPage() {
           <motion.div
             className="bg-gray-800/80 backdrop-blur-sm rounded-lg p-6 border border-cyan-500/30"
             initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
+            animate={{ opacity: 1, height: "auto" }}
             transition={{ duration: 0.5 }}
           >
-            <h3 className="text-xl font-bold mb-4 text-cyan-400">Analysis Parameters</h3>
+            <h3 className="text-xl font-bold mb-4 text-cyan-400">
+              Analysis Parameters
+            </h3>
             <div className="grid md:grid-cols-2 gap-4">
               {Object.entries(parameters).map(([key, value]) => (
                 <div key={key} className="bg-gray-900/50 rounded-lg p-4">
                   <div className="text-sm text-gray-400 mb-1">
-                    {key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                    {key
+                      .replace(/_/g, " ")
+                      .replace(/\b\w/g, (l) => l.toUpperCase())}
                   </div>
                   <div className="text-lg text-white">{String(value)}</div>
                 </div>
@@ -295,7 +383,7 @@ function ResultsPage() {
         ))}
       </div>
     </div>
-  )
+  );
 }
 
-export default ResultsPage
+export default ResultsPage;
