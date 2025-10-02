@@ -62,7 +62,7 @@ function HomePage() {
   });
 
   // Hero animations
-  const heroY = useTransform(heroProgress, [0, 1], ["0%", "100%"]);
+  const heroY = useTransform(heroProgress, [0, 1], ["0%", "0%"]);
   const heroOpacity = useTransform(heroProgress, [0, 0.6], [1, 0]);
   const heroScale = useTransform(heroProgress, [0, 1], [1, 1.2]);
 
@@ -78,15 +78,126 @@ function HomePage() {
   );
   const discoveryScale = useTransform(discoveryProgress, [0, 0.5], [0.8, 1]);
 
+  const scrollToSection = (ref: React.RefObject<HTMLDivElement | null>) => {
+    ref.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <div ref={containerRef} className="min-h-screen">
+      {/* Navigation Bar */}
+      <nav className="fixed top-0 left-0 right-0 w-full z-50 bg-black/90 backdrop-blur-sm border-b border-gray-800">
+        <div className="w-full flex justify-center px-4 sm:px-6 lg:px-8">
+          <div className="w-11/12 max-w-7xl grid grid-cols-3 items-center h-16">
+            {/* Left Side - Section Links */}
+            <div className="flex justify-start items-center">
+              <button
+                onClick={() => scrollToSection(heroRef)}
+                className="text-gray-300 hover:text-cyan-400 transition-colors duration-200 text-sm font-medium px-3 py-2 mr-8"
+              >
+                Home
+              </button>
+              <button
+                onClick={() => scrollToSection(planetsRef)}
+                className="text-gray-300 hover:text-cyan-400 transition-colors duration-200 text-sm font-medium px-3 py-2 mr-8"
+              >
+                Discovery
+              </button>
+              <button
+                onClick={() => scrollToSection(missionRef)}
+                className="text-gray-300 hover:text-cyan-400 transition-colors duration-200 text-sm font-medium px-3 py-2 mr-8"
+              >
+                Mission
+              </button>
+              <button
+                onClick={() => scrollToSection(discoveryRef)}
+                className="text-gray-300 hover:text-cyan-400 transition-colors duration-200 text-sm font-medium px-3 py-2"
+              >
+                Explore
+              </button>
+            </div>
+
+            {/* Center - ZETO Logo */}
+            <div className="flex justify-center">
+              <motion.h1
+                className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600"
+                animate={{
+                  backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+                }}
+                transition={{ duration: 3, repeat: Infinity }}
+                style={{ backgroundSize: "200% 200%" }}
+              >
+                ZETO
+              </motion.h1>
+            </div>
+
+            {/* Right Side - Action Button */}
+            <div className="flex justify-end">
+              <motion.button
+                className="group relative px-8 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full text-sm font-semibold text-white overflow-hidden cursor-pointer"
+                style={{ zIndex: 9999 }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  console.log("Navbar button clicked!");
+                  try {
+                    navigate("/detection");
+                    console.log("Navigation called successfully");
+                  } catch (error) {
+                    console.error("Navigation error:", error);
+                  }
+                }}
+                whileHover={{ 
+                  scale: 1.05,
+                  transition: { type: "spring", stiffness: 400, damping: 10 }
+                }}
+                whileTap={{ 
+                  scale: 0.9,
+                  transition: { type: "spring", stiffness: 600, damping: 15 }
+                }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              >
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600"
+                  initial={{ x: "-100%" }}
+                  whileHover={{ x: "0%" }}
+                  transition={{ 
+                    type: "spring", 
+                    stiffness: 300, 
+                    damping: 30,
+                    duration: 0.4 
+                  }}
+                />
+                <motion.span 
+                  className="relative flex items-center gap-2"
+                  style={{ zIndex: 9999 }}
+                  whileTap={{ 
+                    scale: 0.95,
+                    transition: { type: "spring", stiffness: 500, damping: 15 }
+                  }}
+                >
+                  <motion.div
+                    whileTap={{ 
+                      rotate: 15,
+                      transition: { type: "spring", stiffness: 400, damping: 12 }
+                    }}
+                  >
+                    <Rocket className="w-4 h-4" />
+                  </motion.div>
+                  Zeto System
+                </motion.span>
+              </motion.button>
+            </div>
+          </div>
+        </div>
+      </nav>
+
       {/* Hero Section */}
       <motion.section
         ref={heroRef}
-        className="h-screen relative flex items-center justify-center overflow-hidden"
+        className="h-screen relative flex items-center justify-center overflow-hidden pt-16"
         style={{ y: heroY, opacity: heroOpacity, scale: heroScale }}
       >
-        <div className="absolute inset-0 bg-gradient-to-b from-purple-900/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-purple-900/20 to-transparent pointer-events-none" />
 
         <motion.div
           className="text-center z-10 px-4"
@@ -157,14 +268,14 @@ function HomePage() {
       {/* Planetary System Section */}
       <motion.section
         ref={planetsRef}
-        className="h-screen relative flex items-center justify-center overflow-visible"
+        className="min-h-screen relative flex flex-col items-center justify-start overflow-visible py-20"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true, amount: 0.7 }}
       >
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-blue-900/10 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-blue-900/10 to-transparent pointer-events-none" />
 
-        <div className="relative z-10 text-center mb-20 py-32">
+        <div className="relative z-10 text-center mb-16">
           <motion.h2 className="text-5xl mb-4 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">
             The Cosmic Hunt Begins
           </motion.h2>
@@ -174,10 +285,98 @@ function HomePage() {
           </motion.p>
         </div>
 
+        {/* Detection Challenges Containers */}
+        <div className="relative z-10 max-w-6xl mx-auto px-4 mb-16">
+          <div className="grid md:grid-cols-2 gap-12">
+            {/* Image Container - Left */}
+            <motion.div
+              className="bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-8 shadow-2xl flex items-center justify-center"
+              initial={{ opacity: 0, x: -100 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1, delay: 0.3 }}
+            >
+              <div className="w-full h-full min-h-[400px] relative overflow-hidden rounded-xl">
+                <img 
+                  src="/assets/milky-way.jpg" 
+                  alt="Milky Way Galaxy" 
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/20" />
+                
+                {/* Floating particles overlay */}
+                {[...Array(15)].map((_, i) => (
+                  <motion.div
+                    key={i}
+                    className="absolute w-1 h-1 bg-cyan-400 rounded-full opacity-60"
+                    style={{
+                      left: `${10 + Math.random() * 80}%`,
+                      top: `${10 + Math.random() * 80}%`,
+                    }}
+                    animate={{
+                      y: [0, -15, 0],
+                      x: [0, 8, 0],
+                      opacity: [0.3, 0.8, 0.3],
+                      scale: [1, 1.3, 1],
+                    }}
+                    transition={{
+                      duration: 3 + Math.random() * 2,
+                      repeat: Infinity,
+                      delay: Math.random() * 2,
+                      ease: "easeInOut",
+                    }}
+                  />
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Text Container - Right */}
+            <motion.div
+              className="bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-8 shadow-2xl"
+              initial={{ opacity: 0, x: 100 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1, delay: 0.5 }}
+            >
+              <h3 className="text-3xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">
+                The Challenge of Detection
+              </h3>
+              
+              <p className="text-gray-300 leading-relaxed mb-6">
+                The main challenge in detecting exoplanets stems from the fact that they are tiny, 
+                incredibly distant, and overwhelmed by the light of their host star.
+              </p>
+
+              <div className="space-y-4">
+                <div className="border-l-4 border-cyan-500 pl-4">
+                  <h4 className="text-lg font-semibold text-cyan-400 mb-2">Extreme Brightness Contrast</h4>
+                  <p className="text-gray-400 text-sm">
+                    A star is about a billion times brighter than its orbiting planet—like spotting a firefly next to a giant spotlight.
+                  </p>
+                </div>
+
+                <div className="border-l-4 border-purple-500 pl-4">
+                  <h4 className="text-lg font-semibold text-purple-400 mb-2">Angular Separation</h4>
+                  <p className="text-gray-400 text-sm">
+                    Exoplanets appear incredibly close to their stars from our distant perspective, making separation nearly impossible.
+                  </p>
+                </div>
+
+                <div className="border-l-4 border-blue-500 pl-4">
+                  <h4 className="text-lg font-semibold text-blue-400 mb-2">Indirect Methods</h4>
+                  <p className="text-gray-400 text-sm">
+                    Astronomers detect minute effects: tiny light dips during transits or stellar "wobbles" of just 9 cm/second.
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+
         {/* Animated Solar System */}
         <motion.div
-          className="absolute left-0 right-0 bottom-0 top-32 overflow-visible"
-          style={{ pointerEvents: "none" }}
+          className="absolute left-0 right-0 bottom-0 overflow-visible"
+          style={{ pointerEvents: "none", top: "500px" }}
         >
           {/* Sun positioned half outside on the right */}
           {(() => {
@@ -261,6 +460,7 @@ function HomePage() {
           })()}
         </motion.div>
       </motion.section>
+
 
       {/* Mission Details Section */}
       <motion.section
