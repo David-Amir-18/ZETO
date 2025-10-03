@@ -121,18 +121,7 @@ function ResultsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 p-6">
       <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        {/* <motion.div
-          className="text-center mb-8"
-          initial={{ opacity: 0, y: -50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1 }}
-        >
-          <h1 className="text-4xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">
-            Analysis Complete
-          </h1>
-          <p className="text-xl text-gray-300">Detection results are ready</p>
-        </motion.div> */}
+       
 
         {/* Header */}
         <motion.div

@@ -37,10 +37,10 @@ const questions: Question[] = [
     apiKey: "orbper",
     question: "What is the orbital period in days?",
     type: "number",
-    placeholder: "e.g., 365.25",
-    hint: "Time for one complete orbit around the star (0.15 - 84000 days)",
-    min: 0.15,
-    max: 84000,
+    placeholder: "e.g., 1",
+    hint: "Time for one complete orbit around the star (0.16 - 35.9 days)",
+    min: 0.16,
+    max: 35.9,
   },
   {
     id: "transit_depth",
@@ -48,9 +48,9 @@ const questions: Question[] = [
     question: "What is the transit depth in ppm?",
     type: "number",
     placeholder: "e.g., 100",
-    hint: "How much the star dims during transit (0.05 - 135.5 ppm)",
+    hint: "How much the star dims during transit (0.05 - 14187.7 ppm)",
     min: 0.05,
-    max: 135.5,
+    max: 14187.7,
   },
   {
     id: "transit_duration",
@@ -58,9 +58,9 @@ const questions: Question[] = [
     question: "What is the transit duration in hours?",
     type: "number",
     placeholder: "e.g., 3.5",
-    hint: "How long the transit lasts (0 - 55 hours)",
+    hint: "How long the transit lasts (0 - 7.87 hours)",
     min: 0,
-    max: 55,
+    max: 7.87,
   },
   {
     id: "planet_radius",
@@ -68,9 +68,9 @@ const questions: Question[] = [
     question: "What is the planet radius in Earth radii?",
     type: "number",
     placeholder: "e.g., 1.2",
-    hint: "Size relative to Earth (0.4 - 1080 Earth radii)",
-    min: 0.4,
-    max: 1080,
+    hint: "Size relative to Earth (0.08 - 26.36 Earth radii)",
+    min: 0.08,
+    max: 26.36,
   },
   {
     id: "insolation_flux",
@@ -78,9 +78,9 @@ const questions: Question[] = [
     question: "What is the insolation flux in Earth flux units?",
     type: "number",
     placeholder: "e.g., 1.0",
-    hint: "Amount of stellar energy received (0.027 - 8270 Earth flux units)",
-    min: 0.027,
-    max: 8270,
+    hint: "Amount of stellar energy received (0.015 - 1366.64 Earth flux units)",
+    min: 0.015,
+    max: 1366.64,
   },
   {
     id: "equilibrium_temp",
@@ -88,9 +88,9 @@ const questions: Question[] = [
     question: "What is the equilibrium temperature in Kelvin?",
     type: "number",
     placeholder: "e.g., 288",
-    hint: "Expected surface temperature (82 - 2510 K)",
-    min: 82,
-    max: 2510,
+    hint: "Expected surface temperature (97 - 2146 K)",
+    min: 97,
+    max: 2146,
   },
   {
     id: "stellar_temp",
@@ -98,9 +98,9 @@ const questions: Question[] = [
     question: "What is the stellar effective temperature in Kelvin?",
     type: "number",
     placeholder: "e.g., 5778",
-    hint: "Temperature of the host star (2520 - 46700 K)",
-    min: 2520,
-    max: 46700,
+    hint: "Temperature of the host star (2828 - 7257 K)",
+    min: 2828,
+    max: 7257,
   },
   {
     id: "stellar_logg",
@@ -108,9 +108,9 @@ const questions: Question[] = [
     question: "What is the stellar log(g) in cm/s²?",
     type: "number",
     placeholder: "e.g., 4.5",
-    hint: "Surface gravity of the star (1.773 - 5.275)",
-    min: 1.773,
-    max: 5.275,
+    hint: "Surface gravity of the star (3.89 - 4.91)",
+    min: 3.89,
+    max: 4.91,
   },
   {
     id: "stellar_radius",
@@ -118,16 +118,16 @@ const questions: Question[] = [
     question: "What is the stellar radius in solar radii?",
     type: "number",
     placeholder: "e.g., 1.0",
-    hint: "Size relative to the Sun (0.11 - 85 solar radii)",
-    min: 0.11,
-    max: 85,
+    hint: "Size relative to the Sun (0.16 - 2.07 solar radii)",
+    min: 0.16,
+    max: 2.07,
   },
 ];
 
 const CSV_API_CONFIG = {
-  enabled: false, // Set to true when backend is ready
-  endpoint: "/api/upload-csv", // Backend API endpoint for CSV processing
-  timeout: 30000, // Request timeout in milliseconds
+  enabled: true, // Set to true when backend is ready
+  endpoint: "https://web-production-10e6.up.railway.app//api/analyze_csv", // Backend API endpoint for CSV processing
+  timeout: 300000, // Request timeout in milliseconds
 };
 
 function ChatbotPage() {
@@ -142,6 +142,7 @@ function ChatbotPage() {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isCsv, setIsCsv] = useState(false);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -300,6 +301,7 @@ function ChatbotPage() {
       }, 500);
     } else {
       setIsComplete(true);
+      setIsCsv(false);
       setTimeout(() => {
         typeMessage(
           "Perfect! I have all the data I need. Initiating Zeto deep space analysis...",
@@ -313,9 +315,9 @@ function ChatbotPage() {
   };
 
   /**
-   * Parse CSV file and convert to JSON
+   * Parse CSV file and convert to array of objects
    */
-  const parseCSV = (csvText: string): Record<string, number> | null => {
+  const parseCSV = (csvText: string): Record<string, number>[] | null => {
     try {
       const lines = csvText.trim().split("\n");
       if (lines.length < 2) {
@@ -324,13 +326,12 @@ function ChatbotPage() {
         );
       }
 
+      console.log("CSV Lines:", lines);
+      console.log("CSV Lines[0]:", lines[0]);
+
       // Parse header
       const headers = lines[0].split(",").map((h) => h.trim().toLowerCase());
-
-      // Parse first data row
-      const values = lines[1].split(",").map((v) => v.trim());
-
-      const data: Record<string, number> = {};
+      console.log("CSV Headers:", headers);
 
       // Map CSV columns to API keys
       const csvToApiKeyMap: Record<string, string> = {
@@ -354,27 +355,53 @@ function ChatbotPage() {
         rad: "rad",
       };
 
+      // Create mapping of header positions to API keys
+      const requiredKeys = questions.map((q) => q.apiKey);
+      const headerIndexMap: Record<string, number> = {};
+
       headers.forEach((header, index) => {
         const apiKey = csvToApiKeyMap[header];
-        if (apiKey && values[index]) {
-          const numValue = parseFloat(values[index]);
-          if (!isNaN(numValue)) {
-            data[apiKey] = numValue;
-          }
+        if (apiKey) {
+          headerIndexMap[apiKey] = index;
         }
       });
 
       // Validate that we have all required parameters
-      const requiredKeys = questions.map((q) => q.apiKey);
-      const missingKeys = requiredKeys.filter((key) => !(key in data));
-
+      const missingKeys = requiredKeys.filter(
+        (key) => !(key in headerIndexMap)
+      );
       if (missingKeys.length > 0) {
         throw new Error(
           `Missing required parameters: ${missingKeys.join(", ")}`
         );
       }
 
-      return data;
+      // Parse data rows and convert to array of objects
+      const dataRows: Record<string, number>[] = [];
+
+      for (let i = 1; i < lines.length; i++) {
+        const values = lines[i].split(",").map((v) => v.trim());
+        const rowObject: Record<string, number> = {};
+
+        // Extract values and create object with API keys
+        for (const key of requiredKeys) {
+          const index = headerIndexMap[key];
+          const numValue = parseFloat(values[index]);
+
+          if (isNaN(numValue)) {
+            throw new Error(
+              `Invalid value for ${key} in row ${i}: ${values[index]}`
+            );
+          }
+
+          rowObject[key] = numValue;
+        }
+
+        dataRows.push(rowObject);
+      }
+
+      console.log("Parsed CSV Data Rows:", dataRows);
+      return dataRows;
     } catch (error) {
       console.error("CSV parsing error:", error);
       return null;
@@ -400,6 +427,7 @@ function ChatbotPage() {
     try {
       const text = await file.text();
       const parsedData = parseCSV(text);
+      console.log("Parsed CSV Data:", parsedData);
 
       if (!parsedData) {
         addMessage(
@@ -415,11 +443,13 @@ function ChatbotPage() {
 
       // If API is enabled, send to backend
       if (CSV_API_CONFIG.enabled) {
+        console.log("Sending CSV data to backend:", parsedData);
         await sendCSVToBackend(parsedData);
       } else {
         // Store parameters and proceed
         setParameters(parsedData);
         setIsComplete(true);
+        setIsCsv(true); // Set this before navigating
 
         setTimeout(() => {
           addMessage(
@@ -429,7 +459,12 @@ function ChatbotPage() {
         }, 500);
 
         setTimeout(() => {
-          navigate("/analysis", { state: { parameters: parsedData } });
+          navigate("/analysis", {
+            state: {
+              parameters: parsedData,
+              isCsv: true, // Pass true directly instead of using state variable
+            },
+          });
         }, 2500);
       }
     } catch (error) {
@@ -450,7 +485,8 @@ function ChatbotPage() {
   /**
    * Send CSV data to backend API
    */
-  const sendCSVToBackend = async (data: Record<string, number>) => {
+  const sendCSVToBackend = async (data: Record<string, number>[]) => {
+    addMessage("🚀 Sending data to backend for analysis...", "bot", 500);
     const controller = new AbortController();
     const timeoutId = setTimeout(
       () => controller.abort(),
@@ -458,6 +494,8 @@ function ChatbotPage() {
     );
 
     try {
+      console.log("Sending to backend");
+
       const response = await fetch(CSV_API_CONFIG.endpoint, {
         method: "POST",
         headers: {
@@ -474,22 +512,87 @@ function ChatbotPage() {
       }
 
       const result = await response.json();
+      console.log("Backend response:", result);
 
       addMessage("✅ Data sent to backend successfully!", "bot", 500);
+      setIsComplete(true);
+      setIsCsv(true); // Set this before navigating
 
       // Navigate with backend response
       setTimeout(() => {
         navigate("/analysis", {
-          state: { parameters: data, backendResult: result },
+          state: {
+            parameters: data,
+            backendResult: result,
+            isCsv: true, // Pass true directly
+          },
         });
       }, 2000);
     } catch (error) {
       if (error instanceof Error && error.name === "AbortError") {
-        throw new Error("Request timed out");
+        addMessage("⚠️ Request timed out", "bot", 500, true);
+      } else {
+        addMessage(
+          `⚠️ Error: ${
+            error instanceof Error ? error.message : "Unknown error"
+          }`,
+          "bot",
+          500,
+          true
+        );
       }
-      throw error;
+      setIsUploading(false);
+      setUploadedFile(null);
     }
   };
+
+  /**
+   * Send CSV data to backend API
+   */
+  // const sendCSVToBackend = async (data: Record<string, number>[]) => {
+  //   addMessage("🚀 Sending data to backend for analysis...", "bot", 500);
+  //   const controller = new AbortController();
+  //   const timeoutId = setTimeout(
+  //     () => controller.abort(),
+  //     CSV_API_CONFIG.timeout
+  //   );
+
+  //   try {
+  //     console.log("in try");
+
+  //     const response = await fetch(CSV_API_CONFIG.endpoint, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(data),
+  //       signal: controller.signal,
+  //     });
+
+  //     clearTimeout(timeoutId);
+
+  //     if (!response.ok) {
+  //       throw new Error(`API error: ${response.status} ${response.statusText}`);
+  //     }
+
+  //     const result = await response.json();
+  //     console.log("Backend response:", result);
+
+  //     addMessage("✅ Data sent to backend successfully!", "bot", 500);
+
+  //     // Navigate with backend response
+  //     setTimeout(() => {
+  //       navigate("/analysis", {
+  //         state: { parameters: data, backendResult: result },
+  //       });
+  //     }, 2000);
+  //   } catch (error) {
+  //     if (error instanceof Error && error.name === "AbortError") {
+  //       throw new Error("Request timed out");
+  //     }
+  //     throw error;
+  //   }
+  // };
 
   /**
    * Clear uploaded file

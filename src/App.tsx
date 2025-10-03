@@ -9,6 +9,7 @@ import ChatbotPage from "./components/ChatbotPage";
 import AnalysisPage from "./components/AnalysisPage";
 import ResultsPage from "./components/ResultsPage";
 import ErrorPage from "./components/ErrorPage";
+import CsvResult from "./components/CsvResult";
 
 // Simple inline LoadingScreen component for testing
 function SimpleLoading({ onComplete }: { onComplete: () => void }) {
@@ -76,6 +77,7 @@ export default function App() {
                 <Route path="/analysis" element={<AnalysisPage />} />
                 <Route path="/results" element={<ResultsPage />} />
                 <Route path="/error" element={<ErrorPage />} />
+                <Route path="/csv" element={<CsvResult />} />
                 <Route path="*" element={<ErrorPage />} />
               </Routes>
             </motion.div>

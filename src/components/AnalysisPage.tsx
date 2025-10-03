@@ -19,7 +19,7 @@ interface AnalysisResult {
 // API Configuration - Developer can update these values
 const API_CONFIG = {
   enabled: true, // Set to true when backend is ready
-  endpoint: "https://exotopians.up.railway.app//api/analyze", // Backend API endpoint
+  endpoint: "https://web-production-10e6.up.railway.app//api/analyze", // Backend API endpoint
   timeout: 30000, // Request timeout in milliseconds
 };
 
@@ -30,6 +30,8 @@ function AnalysisPage() {
   const [currentPhase, setCurrentPhase] = useState(0);
   const [apiError, setApiError] = useState<string | null>(null);
   const parameters = location.state?.parameters || {};
+  const isCsv = location.state?.isCsv || false;
+  const backendResult = location.state?.backendResult || null;
 
   const phases: Phase[] = [
     {
@@ -86,23 +88,43 @@ function AnalysisPage() {
    * Developer: Replace the mock logic with actual API call when ready
    */
   const handleAnalysis = async () => {
+    console.log("=== HANDLE ANALYSIS START ===");
+    console.log("isCsv:", isCsv);
+    console.log("backendResult:", backendResult);
+    console.log("parameters:", parameters);
+    console.log("============================");
+
+    // CSV case: if we have backend result, go directly to CSV page
+    if (isCsv && backendResult) {
+      console.log("Using provided backend result for CSV data");
+      console.log("Navigating to CSV page with result:", backendResult);
+      navigate("/csv", {
+        state: {
+          result: backendResult,
+          parameters,
+        },
+      });
+      return;
+    }
+
+    // Regular parameters case: call API or use mock
     try {
       let result: AnalysisResult;
 
       if (API_CONFIG.enabled) {
         // ===== BACKEND API CALL =====
-        // Developer: Uncomment and configure when backend is ready
+        console.log("Calling backend API with parameters:", parameters);
         result = await callBackendAPI(parameters);
-        console.log(result);
-        console.log("Received analysis result from backend API");
+        console.log("Received analysis result from backend API:", result);
       } else {
         // ===== MOCK DATA (for testing) =====
         console.log("Using mock analysis result");
-
         result = generateMockResult(parameters);
+        console.log("Generated mock result:", result);
       }
 
       // Navigate to results page with the analysis result
+      console.log("Navigating to results page");
       navigate("/results", { state: { result, parameters } });
     } catch (error) {
       console.error("Analysis error:", error);
@@ -110,12 +132,10 @@ function AnalysisPage() {
       // Optionally navigate to error page or show error state
     }
   };
-
   /**
    * Backend API call function
    * Developer: Implement this function when backend is ready
    */
-
   const callBackendAPI = async (
     params: Record<string, number>
   ): Promise<AnalysisResult> => {
