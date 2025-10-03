@@ -102,32 +102,25 @@ function HomePage() {
             {/* Left Side - Section Links */}
             <div className="flex justify-start items-center">
               <button
-                onClick={() => scrollToSection(heroRef)}
-                className="text-gray-300 hover:text-cyan-400 transition-colors duration-200 text-sm font-medium px-3 py-2 mr-8 "
-                style={{ marginRight: "16px" }}
-              >
-                Home
-              </button>
-              <button
                 onClick={() => scrollToSection(planetsRef)}
                 className="text-gray-300 hover:text-cyan-400 transition-colors duration-200 text-sm font-medium px-3 py-2 mr-8"
-                style={{ marginRight: "16px" }}
+                style={{ marginRight: "16px", cursor: "pointer" }}
               >
-                Discovery
+                Challenge
               </button>
               <button
                 onClick={() => scrollToSection(missionRef)}
                 className="text-gray-300 hover:text-cyan-400 transition-colors duration-200 text-sm font-medium px-3 py-2 mr-8"
-                style={{ marginRight: "16px" }}
+                style={{ marginRight: "16px", cursor: "pointer" }}
               >
-                Mission
+                Solution
               </button>
               <button
                 onClick={() => scrollToSection(discoveryRef)}
                 className="text-gray-300 hover:text-cyan-400 transition-colors duration-200 text-sm font-medium px-3 py-2"
-                style={{ marginRight: "16px" }}
+                style={{ marginRight: "16px", cursor: "pointer" }}
               >
-                Explore
+                How To Use
               </button>
             </div>
 
@@ -139,7 +132,8 @@ function HomePage() {
                   backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
                 }}
                 transition={{ duration: 3, repeat: Infinity }}
-                style={{ backgroundSize: "200% 200%" }}
+                style={{ backgroundSize: "200% 200%", cursor: "pointer" }}
+                onClick={() => scrollToSection(heroRef)}
               >
                 ZETO
               </motion.h1>
@@ -154,7 +148,10 @@ function HomePage() {
                   navigate("/detection");
                 }}
               >
-                <span className="flex items-center gap-2">
+                <span
+                  className="flex items-center gap-2"
+                  style={{ cursor: "pointer" }}
+                >
                   <Rocket className="w-4 h-4" />
                   Zeto System
                 </span>
@@ -273,7 +270,7 @@ function HomePage() {
                 initial={{ opacity: 0, x: -100 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 1, delay: 0.3 }}
+                transition={{ duration: 1, delay: 0 }}
               >
                 <div className="w-full h-full min-h-[400px] relative overflow-hidden rounded-xl">
                   <img
@@ -452,32 +449,42 @@ function HomePage() {
         </motion.section>
 
         {/* Mission Details Section */}
+
         <motion.section
           ref={missionRef}
-          className="min-h-screen flex items-center justify-center px-4 py-20"
+          className="min-h-screen flex-col flex items-center justify-center px-4 py-20"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true, amount: 0.3 }}
         >
+          <div className="relative z-10 text-center mb-16 ">
+            <motion.h2 className="text-5xl mb-6 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">
+              Our Solution
+            </motion.h2>
+            <motion.p className="text-xl mb-6 text-gray-300 max-w-3xl mx-auto leading-relaxed mt-4">
+              Analyzing space mission data with AI to identify and confirm
+              exoplanets.
+            </motion.p>
+          </div>
           <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-12">
             {[
               {
                 icon: <Telescope className="w-16 h-16" />,
-                title: "Advanced Detection",
+                title: "Data Foundation",
                 description:
-                  "Using cutting-edge AI algorithms to analyze stellar data and identify potential exoplanets through transit photometry and radial velocity measurements.",
+                  "ZETO combines data from three major exoplanet missions (Kepler, TESS, and K2), carefully cleaned and standardized to focus on nine key features related to orbital and stellar properties.",
                 planet: planets[0], // Mercury
               },
               {
                 icon: <Globe className="w-16 h-16" />,
-                title: "Planetary Analysis",
+                title: "Model Training",
                 description:
                   "Deep learning models classify planetary candidates by size, composition, and orbital characteristics to determine habitability potential.",
                 planet: planets[2], // Earth
               },
               {
                 icon: <Stars className="w-16 h-16" />,
-                title: "Cosmic Discovery",
+                title: "Prediction Pipeline",
                 description:
                   "Expanding humanity's understanding of the universe by cataloging new worlds and advancing our search for life beyond Earth.",
                 planet: planets[4], // Jupiter
@@ -485,7 +492,7 @@ function HomePage() {
             ].map((item, index) => (
               <motion.div
                 key={index}
-                className="text-center relative"
+                className="text-center relative flex-col bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-8 shadow-2xl flex items-center justify-center"
                 style={{
                   y: useTransform(missionProgress, [0, 0.5, 1], [100, 0, -100]),
                   rotate: useTransform(
