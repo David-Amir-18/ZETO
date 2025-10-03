@@ -11,7 +11,7 @@ import {
   Stars,
 } from "lucide-react";
 
-import MilkyWayImage from "../assets/milky-way.jpg";
+import MilkyWayImage from "../../assets/milky-way.jpg";
 
 interface Planet {
   name: string;
