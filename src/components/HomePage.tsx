@@ -11,6 +11,8 @@ import {
   Stars,
 } from "lucide-react";
 
+import MilkyWayImage from "../assets/milky-way.jpg";
+
 interface Planet {
   name: string;
   size: number;
@@ -275,7 +277,7 @@ function HomePage() {
               >
                 <div className="w-full h-full min-h-[400px] relative overflow-hidden rounded-xl">
                   <img
-                    src="/assets/milky-way.jpg"
+                    src={MilkyWayImage}
                     alt="Milky Way Galaxy"
                     className="w-full h-full object-cover rounded-2xl"
                   />
