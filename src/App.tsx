@@ -71,7 +71,7 @@ export default function App() {
               className="w-full min-h-screen"
             >
               <Routes>
-                <Route path="/ZETO" element={<HomePage />} />
+                <Route path="/" element={<HomePage />} />
                 <Route path="/detection" element={<ChatbotPage />} />
                 <Route path="/analysis" element={<AnalysisPage />} />
                 <Route path="/results" element={<ResultsPage />} />
