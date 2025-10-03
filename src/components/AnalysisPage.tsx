@@ -246,10 +246,7 @@ function AnalysisPage() {
         </motion.div>
 
         {/* Central Animation */}
-        <div
-          className="relative mb-12 overflow-visible"
-          style={{ overflow: "visible" }}
-        >
+        <div className="relative mb-12 overflow-visible">
           <motion.div
             className="w-80 h-80 mx-auto relative"
             animate={{ rotate: 360 }}

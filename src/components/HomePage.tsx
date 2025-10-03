@@ -1,5 +1,5 @@
-import { motion, useScroll, useTransform } from "motion/react";
-import { useRef } from "react";
+import { motion, useScroll, useTransform, AnimatePresence } from "motion/react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   ChevronDown,
@@ -9,8 +9,10 @@ import {
   Rocket,
   Globe,
   Stars,
+  Menu,
+  X,
 } from "lucide-react";
-
+import "../styles/home.css";
 import MilkyWayImage from "../../assets/milky-way.jpg";
 
 interface Planet {
@@ -40,6 +42,7 @@ function HomePage() {
   const missionRef = useRef<HTMLDivElement>(null);
   const discoveryRef = useRef<HTMLDivElement>(null);
   const finalRef = useRef<HTMLDivElement>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -86,81 +89,190 @@ function HomePage() {
 
   return (
     <>
-      {/* Navigation Bar */}
       <nav
-        className="fixed top-0 left-0 right-0 w-full border-b border-gray-800"
+        className="fixed top-0 left-0 border-b border-gray-800"
         style={{
           boxShadow: "0 10px 1000px rgba(255, 255, 255, 0.5)",
           margin: "0 0 64px 0",
           backgroundColor: "rgba(0, 0, 0, 0)",
           zIndex: 1000,
           backdropFilter: "blur(10px)",
+          width: "100vw",
+          overflow: "hidden",
         }}
       >
-        <div className="w-full flex justify-center px-4 sm:px-6 lg:px-8">
-          <div className="w-11/12 max-w-7xl grid grid-cols-3 items-center h-16">
-            {/* Left Side - Section Links */}
-            <div className="flex justify-start items-center">
+        <div
+          className="w-full flex justify-between px-8"
+          style={{ height: "64px", alignItems: "center", paddingX: "30px" }}
+        >
+          {/* Left Section */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "flex-start",
+            }}
+          >
+            {/* Mobile: Hamburger Menu */}
+            <div className="mobile-menu-btn items-center">
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="text-gray-300 hover:text-cyan-400 transition-colors p-2"
+                aria-label="Toggle menu"
+                style={{ cursor: "pointer" }}
+              >
+                {mobileMenuOpen ? (
+                  <X className="w-6 h-6" />
+                ) : (
+                  <Menu className="w-6 h-6" />
+                )}
+              </button>
+            </div>
+
+            {/* Desktop: Section Links */}
+            <div className="desktop-nav-links items-center">
               <button
                 onClick={() => scrollToSection(planetsRef)}
-                className="text-gray-300 hover:text-cyan-400 transition-colors duration-200 text-sm font-medium px-3 py-2 mr-8"
-                style={{ marginRight: "16px", cursor: "pointer" }}
+                className="text-gray-300  transition-colors duration-200 text-m font-medium px-3 py-2"
+                style={{ cursor: "pointer" }}
               >
                 Challenge
               </button>
               <button
                 onClick={() => scrollToSection(missionRef)}
-                className="text-gray-300 hover:text-cyan-400 transition-colors duration-200 text-sm font-medium px-3 py-2 mr-8"
-                style={{ marginRight: "16px", cursor: "pointer" }}
+                className="text-gray-300 hover:text-cyan-400 transition-colors duration-200 text-m font-medium px-3 py-2"
+                style={{ cursor: "pointer", marginLeft: "1rem" }}
               >
                 Solution
               </button>
               <button
                 onClick={() => scrollToSection(discoveryRef)}
-                className="text-gray-300 hover:text-cyan-400 transition-colors duration-200 text-sm font-medium px-3 py-2"
-                style={{ marginRight: "16px", cursor: "pointer" }}
+                className="text-gray-300 hover:text-cyan-400 transition-colors duration-200 text-m font-medium px-3 py-2"
+                style={{ cursor: "pointer", marginLeft: "1rem" }}
               >
                 How To Use
               </button>
             </div>
+          </div>
 
-            {/* Center - ZETO Logo */}
-            <div className="flex justify-center">
-              <motion.h1
-                className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600"
-                animate={{
-                  backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
-                }}
-                transition={{ duration: 3, repeat: Infinity }}
-                style={{ backgroundSize: "200% 200%", cursor: "pointer" }}
-                onClick={() => scrollToSection(heroRef)}
-              >
-                ZETO
-              </motion.h1>
-            </div>
+          {/* Center: ZETO Logo */}
+          <div
+            className="absolute left-1/2 transform -translate-x-1/2"
+            style={{ display: "flex", justifyContent: "center" }}
+          >
+            <motion.h1
+              className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600"
+              animate={{
+                backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+              }}
+              transition={{ duration: 3, repeat: Infinity }}
+              style={{
+                backgroundSize: "200% 200%",
+                cursor: "pointer",
+                whiteSpace: "nowrap",
+              }}
+              onClick={() => scrollToSection(heroRef)}
+            >
+              ZETO
+            </motion.h1>
+          </div>
 
-            {/* Right Side - Action Button */}
-            <div className="flex justify-end">
-              <button
-                className="group relative px-8 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full text-sm font-semibold text-white overflow-hidden cursor-pointer"
-                onClick={() => {
-                  console.log("Button clicked!");
-                  navigate("/detection");
-                }}
-              >
-                <span
-                  className="flex items-center gap-2"
-                  style={{ cursor: "pointer" }}
-                >
-                  <Rocket className="w-4 h-4" />
-                  Zeto System
-                </span>
-              </button>
-            </div>
+          {/* Right: Action Button */}
+          <div style={{ display: "flex", justifyContent: "flex-end" }}>
+            <button
+              className="nav-action-btn  bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full font-semibold text-white overflow-hidden"
+              onClick={() => {
+                console.log("Button clicked!");
+                navigate("/detection");
+              }}
+              style={{ cursor: "pointer" }}
+            >
+              <span className="flex items-center gap-2">
+                <Rocket style={{ width: "1rem", height: "1rem" }} />
+                <span className="nav-button-text-full">Zeto System</span>
+                <span className="nav-button-text-short">Start</span>
+              </span>
+            </button>
           </div>
         </div>
+
+        {/* Mobile Dropdown Menu */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+              style={{
+                borderTop: "1px solid rgb(31, 41, 55)",
+                backgroundColor: "rgba(0, 0, 0, 0.95)",
+                backdropFilter: "blur(16px)",
+              }}
+            >
+              <div className="px-4 py-4">
+                <button
+                  onClick={() => scrollToSection(planetsRef)}
+                  className="w-full text-left text-gray-300 hover:text-cyan-400 transition-all duration-200 text-sm font-medium px-4 py-3 rounded-lg"
+                  style={{
+                    cursor: "pointer",
+                    display: "block",
+                    marginBottom: "0.75rem",
+                  }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.backgroundColor =
+                      "rgba(31, 41, 55, 0.5)")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.backgroundColor = "transparent")
+                  }
+                >
+                  Challenge
+                </button>
+                <button
+                  onClick={() => scrollToSection(missionRef)}
+                  className="w-full text-left text-gray-300 hover:text-cyan-400 transition-all duration-200 text-sm font-medium px-4 py-3 rounded-lg"
+                  style={{
+                    cursor: "pointer",
+                    display: "block",
+                    marginBottom: "0.75rem",
+                  }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.backgroundColor =
+                      "rgba(31, 41, 55, 0.5)")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.backgroundColor = "transparent")
+                  }
+                >
+                  Solution
+                </button>
+                <button
+                  onClick={() => scrollToSection(discoveryRef)}
+                  className="w-full text-left text-gray-300 hover:text-cyan-400 transition-all duration-200 text-sm font-medium px-4 py-3 rounded-lg"
+                  style={{ cursor: "pointer", display: "block" }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.backgroundColor =
+                      "rgba(31, 41, 55, 0.5)")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.backgroundColor = "transparent")
+                  }
+                >
+                  How To Use
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
-      <div ref={containerRef} className="min-h-screen">
+
+      {/* Main Content */}
+      <div
+        ref={containerRef}
+        className="min-h-screen"
+        style={{ overflowX: "hidden", width: "100vw" }}
+      >
         {/* Hero Section */}
         <motion.section
           ref={heroRef}
@@ -170,6 +282,8 @@ function HomePage() {
             opacity: heroOpacity,
             scale: heroScale,
             margin: "64px 0 0 0 ",
+            width: "100vw",
+            overflow: "hidden",
           }}
         >
           <div className="absolute inset-0 bg-gradient-to-b from-purple-900/20 to-transparent pointer-events-none" />
@@ -247,6 +361,7 @@ function HomePage() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true, amount: 0.7 }}
+          style={{ width: "100vw", overflow: "hidden" }}
         >
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-blue-900/10 to-transparent pointer-events-none" />
 
@@ -449,13 +564,13 @@ function HomePage() {
         </motion.section>
 
         {/* Mission Details Section */}
-
         <motion.section
           ref={missionRef}
           className="min-h-screen flex-col flex items-center justify-center px-4 py-20"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true, amount: 0.3 }}
+          style={{ width: "100vw", overflow: "hidden" }}
         >
           <div className="relative z-10 text-center mb-16 ">
             <motion.h2 className="text-5xl mb-6 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">
@@ -529,6 +644,7 @@ function HomePage() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
+          style={{ width: "100vw", overflow: "hidden" }}
         >
           <motion.div
             className="absolute inset-0 z-10 overflow-visible pointer-events-none"
@@ -645,32 +761,32 @@ function HomePage() {
         {/* Final CTA Section */}
         <motion.section
           ref={finalRef}
-          className="h-screen flex items-center justify-center relative overflow-hidden"
+          className="h-screen flex items-center justify-center relative overflow-hidden px-4"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
+          style={{ width: "100vw", overflow: "hidden" }}
         >
           <motion.div
-            className="text-center z-10 relative"
+            className="text-center z-10 relative max-w-4xl mx-auto"
             initial={{ scale: 0.8, opacity: 0 }}
             whileInView={{ scale: 1, opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 1 }}
           >
             <motion.h2
-              className="text-7xl mb-8 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500"
+              className="final-title mb-4 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500"
               animate={{ scale: [1, 1.05, 1] }}
               transition={{ duration: 3, repeat: Infinity }}
             >
               Begin Your Journey
             </motion.h2>
-            <p className="text-2xl text-gray-300 mb-12 max-w-3xl mx-auto">
+            <p className="final-paragraph text-gray-300 mb-6 max-w-3xl mx-auto px-4">
               Launch Zeto's AI detection system and embark on humanity's
               greatest adventure
             </p>
-
             <motion.button
-              className="group relative px-16 py-6 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full text-2xl font-semibold text-white overflow-hidden"
+              className="group relative bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full text-white overflow-hidden"
               onClick={() => navigate("/detection")}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
@@ -681,9 +797,12 @@ function HomePage() {
                 whileHover={{ x: "0%" }}
                 transition={{ duration: 0.3 }}
               />
-              <span className="relative z-10 flex items-center gap-4">
-                <Rocket className="w-8 h-8" />
-                Launch Zeto System
+              <span className="relative z-10 flex items-center gap-2">
+                <Rocket className="final-rocket" />
+                <span className="final-button-text-desktop">
+                  Launch Zeto System
+                </span>
+                <span className="final-button-text-mobile">Launch</span>
                 <motion.div
                   animate={{ x: [0, 10, 0] }}
                   transition={{ duration: 1.5, repeat: Infinity }}
@@ -694,7 +813,7 @@ function HomePage() {
             </motion.button>
           </motion.div>
 
-          {/* Final animated solar system */}
+          {/* Final animated solar system - (No changes needed here as they were not responsive utility classes) */}
           <motion.div
             className="absolute inset-0 flex items-center justify-center pointer-events-none"
             animate={{ rotate: 360 }}

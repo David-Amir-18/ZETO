@@ -10,6 +10,7 @@ import {
   FileText,
   X,
 } from "lucide-react";
+import "../styles/chat.css";
 
 interface Question {
   id: string;
@@ -502,13 +503,23 @@ function ChatbotPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 flex flex-col">
+    <div
+      className=" min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 flex flex-col"
+      style={{ hieght: "100vh", overflow: "hidden" }}
+    >
       {/* Header */}
       <motion.header
-        className="p-6 border-b border-blue-500/30"
+        className="p-6 border-b border-blue-500/30 fixed  top-0 left-0 "
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5 }}
+        style={{
+          boxShadow: "0 10px 1000px rgba(0, 0, 0, 0.5)",
+          margin: "0 0 64px 0",
+          backgroundColor: "rgba(0, 0, 0, 0)",
+          zIndex: 1000,
+          backdropFilter: "blur(50px)",
+        }}
       >
         <div className="flex items-center gap-4">
           <motion.div
@@ -660,7 +671,7 @@ function ChatbotPage() {
           </div>
 
           {/* CSV Upload Section */}
-          <div className="mb-4 flex items-center gap-3">
+          <div className="file-container">
             <input
               ref={fileInputRef}
               type="file"
@@ -669,30 +680,25 @@ function ChatbotPage() {
               className="hidden"
               id="csv-upload"
             />
-            <label
-              htmlFor="csv-upload"
-              className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 px-4 py-2 rounded-lg cursor-pointer transition-all duration-200"
-            >
-              <Upload className="w-4 h-4 text-white" />
-              <span className="text-white text-sm font-medium">Upload CSV</span>
+            <label htmlFor="csv-upload" className="upload-button">
+              <Upload className="upload-icon" />
+              <span className="upload-button-text">Upload CSV</span>
             </label>
 
             {uploadedFile && (
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="flex items-center gap-2 bg-gray-800/80 border border-cyan-500/30 rounded-lg px-3 py-2"
+                className="file-chip"
               >
-                <FileText className="w-4 h-4 text-cyan-400" />
-                <span className="text-sm text-gray-300">
-                  {uploadedFile.name}
-                </span>
+                <FileText className="file-chip-icon" />
+                <span className="file-chip-text">{uploadedFile.name}</span>
                 <button
                   type="button"
                   onClick={handleClearFile}
-                  className="ml-2 hover:bg-red-500/20 p-1 rounded transition-colors"
+                  className="clear-button"
                 >
-                  <X className="w-4 h-4 text-red-400" />
+                  <X className="clear-icon" />
                 </button>
               </motion.div>
             )}
@@ -701,7 +707,7 @@ function ChatbotPage() {
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                className="w-5 h-5 border-2 border-cyan-400 border-t-transparent rounded-full"
+                className="spinner"
               />
             )}
           </div>
