@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import "../styles/home.css";
 import MilkyWayImage from "../../assets/milky-way.jpg";
-
+import CsvImage from "../../assets/csv-image.png";
 interface Planet {
   name: string;
   size: number;
@@ -96,7 +96,7 @@ function HomePage() {
           margin: "0 0 64px 0",
           backgroundColor: "rgba(0, 0, 0, 0)",
           zIndex: 1000,
-          backdropFilter: "blur(10px)",
+          backdropFilter: "blur(80px)",
           width: "100vw",
           overflow: "hidden",
         }}
@@ -640,122 +640,89 @@ function HomePage() {
         {/* Discovery Showcase Section */}
         <motion.section
           ref={discoveryRef}
-          className="h-screen relative flex items-center justify-center overflow-visible"
+          className="min-h-screen flex-col flex items-center justify-center px-4 py-20"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.3 }}
           style={{ width: "100vw", overflow: "hidden" }}
         >
-          <motion.div
-            className="absolute inset-0 z-10 overflow-visible pointer-events-none"
-            style={{
-              width: "100%",
-              height: "100%",
-              // left: "-50%",
-              // top: "-50%",
-            }}
-            animate={{
-              background: [
-                "radial-gradient(circle 400px at 30% 60%, rgba(102, 0, 255, 0.15) 0%, transparent 60%)",
-                "radial-gradient(circle 400px at 70% 40%, rgba(0, 212, 255, 0.15) 0%, transparent 60%)",
-                "radial-gradient(circle 400px at 50% 30%, rgba(255, 51, 102, 0.1) 0%, transparent 60%)",
-                "radial-gradient(circle 400px at 30% 60%, rgba(102, 0, 255, 0.15) 0%, transparent 60%)",
-              ],
-            }}
-            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          />
-
-          <div className="relative z-10 text-center max-w-4xl mx-auto px-4">
-            <motion.h2
-              className="text-6xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500"
-              style={{
-                y: discoveryY,
-                scale: discoveryScale,
-              }}
-            >
-              Discover the Unknown
+          <div className="relative z-10 text-center mb-16">
+            <motion.h2 className="text-5xl mb-6 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">
+              How To Use
             </motion.h2>
-
-            <motion.p
-              className="text-2xl text-gray-300 mb-12"
-              style={{
-                y: useTransform(discoveryProgress, [0, 1], ["100px", "-100px"]),
-              }}
-            >
-              Join the next generation of cosmic explorers. Let Zeto guide you
-              through the mysteries of distant worlds.
+            <motion.p className="text-xl mb-6 text-gray-300 max-w-3xl mx-auto leading-relaxed mt-4">
+              Two simple ways to get predictions from Zeto for your exoplanet
+              data.
             </motion.p>
-
-            {/* Orbital visualization with planets */}
-            {/* <motion.div
-            className="relative w-96 h-96 mx-auto mb-12"
-            style={{
-              rotate: useTransform(discoveryProgress, [0, 1], [0, 720]),
-            }}
-          >
-            {planets.slice(0, 5).map((planet, index) => {
-              const orbitRadius = 50 + index * 30;
-              const angle = index * 72 * (Math.PI / 180); // 72 degrees apart
-              const x = Math.cos(angle) * orbitRadius;
-              const y = Math.sin(angle) * orbitRadius;
-
-              return (
-                <motion.div
-                  key={planet.name}
-                  className="absolute rounded-full"
-                  style={{
-                    width: planet.size,
-                    height: planet.size,
-                    backgroundColor: planet.color,
-                    left: "50%",
-                    top: "50%",
-                    marginLeft: x,
-                    marginTop: y,
-                    boxShadow: `0 0 15px ${planet.color}`,
-                  }}
-                  animate={{
-                    scale: [1, 1.2, 1],
-                    boxShadow: [
-                      `0 0 15px ${planet.color}`,
-                      `0 0 25px ${planet.color}`,
-                      `0 0 15px ${planet.color}`,
-                    ],
-                  }}
-                  transition={{
-                    duration: 2 + index * 0.3,
-                    repeat: Infinity,
-                    delay: index * 0.5,
-                  }}
-                />
-              );
-            })}
-          </motion.div> */}
           </div>
 
-          {/* Floating planetary debris */}
-          {planets.map((planet, index) => (
+          <div className="max-w-4xl mx-auto flex flex-col gap-12">
+            {/* Chat Card */}
             <motion.div
-              key={`debris-${index}`}
-              className="absolute w-3 h-3 rounded-full opacity-40"
+              className="text-center relative flex-col bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-8 shadow-2xl flex items-center justify-center"
               style={{
-                backgroundColor: planet.color,
-                left: `${10 + index * 10}%`,
-                top: `${20 + index * 8}%`,
+                y: useTransform(discoveryProgress, [0, 0.5, 1], [100, 0, -100]),
               }}
-              animate={{
-                x: [0, 100, -50, 0],
-                y: [0, -80, 60, 0],
-                rotate: [0, 360, 720, 1080],
-                scale: [1, 1.5, 0.8, 1],
+            >
+              <motion.div
+                className="text-cyan-400 mb-6 relative z-10"
+                animate={{ rotate: [0, 5, -5, 0] }}
+                transition={{ duration: 4, repeat: Infinity }}
+              >
+                <Globe className="w-16 h-16" />
+              </motion.div>
+              <h3 className="text-3xl mb-4 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">
+                Chat with Zeto
+              </h3>
+              <p className="text-gray-300 leading-relaxed">
+                Simply talk to Zeto and provide the 9 required parameters:
+                orbital period, transit depth, transit duration, planet radius,
+                insolation flux, equilibrium temperature, stellar effective
+                temperature, stellar log(g), and stellar radius. Each parameter
+                should be within its valid range. Once you provide them, Zeto
+                will instantly predict whether the planet is a False Positive,
+                Candidate, or Confirmed.
+              </p>
+            </motion.div>
+
+            {/* CSV Upload Card */}
+            <motion.div
+              className="text-center relative flex-col bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-8 shadow-2xl flex items-center justify-center"
+              style={{
+                y: useTransform(discoveryProgress, [0, 0.5, 1], [100, 0, -100]),
               }}
-              transition={{
-                duration: 15 + index * 2,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: index * 1.5,
-              }}
-            />
-          ))}
+            >
+              <motion.div
+                className="text-cyan-400 mb-6 relative z-10"
+                animate={{ rotate: [0, 5, -5, 0] }}
+                transition={{ duration: 4, repeat: Infinity }}
+              >
+                <Rocket className="w-16 h-16" />
+              </motion.div>
+              <h3 className="text-3xl mb-4 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">
+                Upload a CSV File
+              </h3>
+              <p className="text-gray-300 leading-relaxed mb-6">
+                If you prefer bulk predictions, you can upload a CSV file
+                containing exactly 9 columns, named using the abbreviations:
+                orbper, trandep, trandur, rade, insol, eqt, teff, logg, rad.
+                Zeto will process the file and return a new CSV with an
+                additional column showing the prediction result for each entry.
+              </p>
+
+              {/* Image Placeholder */}
+              <div className="flex flex-col w-full max-w-2xl mx-auto bg-gray-800/50 border border-gray-600/30 rounded-lg p-4 flex items-center justify-center min-h-[200px]">
+                <p className="text-cyan-500 text-sm mb-2">
+                  CSV Format Example Image
+                </p>
+                <img
+                  src={CsvImage}
+                  alt="CSV Format Example"
+                  className="w-full rounded-lg"
+                />
+              </div>
+            </motion.div>
+          </div>
         </motion.section>
 
         {/* Final CTA Section */}
