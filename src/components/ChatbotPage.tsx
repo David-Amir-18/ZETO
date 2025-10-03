@@ -519,6 +519,7 @@ function ChatbotPage() {
           backgroundColor: "rgba(0, 0, 0, 0)",
           zIndex: 1000,
           backdropFilter: "blur(50px)",
+          width: "100%",
         }}
       >
         <div className="flex items-center gap-4">
@@ -539,7 +540,10 @@ function ChatbotPage() {
       </motion.header>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-4">
+      <div
+        className="flex-1 overflow-y-auto p-6 space-y-4"
+        style={{ marginTop: "128px" }}
+      >
         <AnimatePresence>
           {messages.map((message) => (
             <motion.div
