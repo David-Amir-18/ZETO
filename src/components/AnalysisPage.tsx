@@ -95,9 +95,7 @@ function AnalysisPage() {
         result = await callBackendAPI(parameters);
         console.log(result);
         console.log("Received analysis result from backend API");
-        
       } else {
-        
         // ===== MOCK DATA (for testing) =====
         console.log("Using mock analysis result");
 
@@ -248,7 +246,10 @@ function AnalysisPage() {
         </motion.div>
 
         {/* Central Animation */}
-        <div className="relative mb-12">
+        <div
+          className="relative mb-12 overflow-visible"
+          style={{ overflow: "visible" }}
+        >
           <motion.div
             className="w-80 h-80 mx-auto relative"
             animate={{ rotate: 360 }}
@@ -283,7 +284,7 @@ function AnalysisPage() {
             </motion.div>
 
             {/* Orbiting data points */}
-            {[...Array(8)].map((_, i) => (
+            {[...Array(0)].map((_, i) => (
               <motion.div
                 key={i}
                 className="absolute w-3 h-3 bg-cyan-400 rounded-full"

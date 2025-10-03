@@ -209,7 +209,7 @@ function ChatbotPage() {
     sender: "bot" | "user",
     isError = false
   ) => {
-    setIsTyping(true);
+    // setIsTyping(true);
     await new Promise((resolve) =>
       setTimeout(resolve, 1000 + Math.random() * 1000)
     );

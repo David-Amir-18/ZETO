@@ -63,13 +63,13 @@ function ResultsPage() {
       case "candidate":
         return {
           glowColor: "0 0 30px rgba(34, 197, 94, 0.5)",
-          particleColor: "bg-green-400",
-          title: "CONFIRMED EXOPLANET",
+          particleColor: "bg-yellow-400",
+          title: "EXOPLANET CANDIDATE",
           icon: "🌍",
-          color: "linear-gradient(to right, #4ADE80, #059669)",
-          bgColor: " bg-green-500/20 ",
-          borderColor: " var(--color-green-400) ",
-          description: "High confidence detection of a genuine exoplanet!",
+          color: "linear-gradient(to right, #FBBF24, #F97316)",
+          bgColor: " bg-yellow-500/20 ",
+          borderColor: " var(--color-yellow-400) ",
+          description: "Promising signal requires additional verification.",
         };
       case "false_positive":
         return {
