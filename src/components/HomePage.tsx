@@ -358,7 +358,7 @@ function HomePage() {
         <motion.section
           ref={planetsRef}
           className="min-h-screen relative flex flex-col items-center justify-start overflow-visible py-20"
-          initial={{ opacity: 0 }}
+          initial={{ opacity: 1 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true, amount: 0.7 }}
           style={{ width: "100vw", overflow: "hidden" }}
