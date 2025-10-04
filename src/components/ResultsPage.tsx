@@ -12,6 +12,7 @@ import { useState } from "react";
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
 import { Badge } from "./ui/badge";
+import HabitabilityForm from "./ui/HabitabilityForm";
 import "../index.css";
 
 interface Result {
@@ -117,12 +118,75 @@ function ResultsPage() {
     a.click();
     URL.revokeObjectURL(url);
   };
+  // Habitability calculation function
+  function calculateHabitabilityScore(
+    planetRadius: number,
+    planetMass: number,
+    orbitalPeriod: number,
+    stellarMass: number,
+    stellarTemperature: number
+  ) {
+    // Calculate density (g/cm³)
+    const earthMass = 5.972e24; // kg
+    const earthRadius = 6371; // km
+    const massKg = planetMass * earthMass;
+    const radiusKm = planetRadius * earthRadius;
+    const volume = (4 / 3) * Math.PI * Math.pow(radiusKm * 1e5, 3); // cm³
+    const density = (massKg * 1000) / volume; // g/cm³
+
+    // Calculate equilibrium temperature (simplified)
+    const solarLuminosity = 3.828e26; // W
+    const auToMeters = 1.496e11;
+    // Estimate semi-major axis from orbital period (Kepler's third law)
+    const periodSeconds = orbitalPeriod * 24 * 3600;
+    const G = 6.674e-11;
+    const solarMassKg = 1.989e30;
+    const stellarMassKg = stellarMass * solarMassKg;
+    const a = Math.pow(
+      (G * stellarMassKg * Math.pow(periodSeconds, 2)) /
+        (4 * Math.PI * Math.PI),
+      1 / 3
+    );
+
+    // Estimate stellar luminosity from temperature (Stefan-Boltzmann)
+    const solarTemp = 5778;
+    const stellarLuminosity =
+      solarLuminosity * Math.pow(stellarTemperature / solarTemp, 4);
+
+    // Equilibrium temperature (assuming albedo of 0.3)
+    const eqTemp =
+      278 *
+      Math.pow(stellarLuminosity / solarLuminosity, 0.25) *
+      Math.pow(auToMeters / a, 0.5);
+
+    let score = 0;
+
+    // Temperature Score (40 points) - Most Critical
+    if (eqTemp >= 200 && eqTemp <= 400) {
+      score += 40 * Math.exp(-Math.pow((eqTemp - 288) / 100, 2));
+    }
+
+    // Size Score (30 points) - Rocky vs Gaseous
+    if (planetRadius >= 0.5 && planetRadius <= 1.7) {
+      score += 30 * Math.exp(-Math.pow((planetRadius - 1.0) / 0.4, 2));
+    }
+
+    // Density Score (20 points) - Composition indicator
+    if (density >= 3 && density <= 8) {
+      score += 20;
+    }
+
+    // Stellar Stability Score (10 points)
+    if (stellarTemperature >= 3500 && stellarTemperature <= 7000) {
+      score += 10;
+    }
+
+    return Math.min(score, 100);
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 p-6">
       <div className="max-w-4xl mx-auto">
-       
-
         {/* Header */}
         <motion.div
           className="text-center mb-8"
@@ -168,31 +232,70 @@ function ResultsPage() {
                     </Badge>
                   </div>
 
-                  {/* put the planet radius here, but update the REsult interface first here and in the analysis */}
-                  {/*<div className="flex justify-between items-center">
-                      <span className="text-gray-300">Planet Radius:</span>
-                      <span className="text-white">
-                        {result.planetRadius.toFixed(3)} R⊕
-                      </span>
-                    </div> */}
+                  {/* Habitability Calculator - Only shown for confirmed results */}
+                  {result.type === "confirmed" && (
+                    <HabitabilityForm
+                      orbitalPeriod={parameters.orbper}
+                      stellarTemperature={parameters.teff}
+                      onCalculate={calculateHabitabilityScore}
+                      className="backdrop-blur-sm"
+                    />
+                  )}
 
-                  {/* same here with the habitability score */}
-                  {/* <div className="flex justify-between items-center">
-                    <span className="text-gray-300">Habitability Score:</span>
-                    <div className="flex items-center">
-                      <span className="text-white mr-2">
-                        {result.habitabilityScore.toFixed(0)}%
-                      </span>
-                      <div className="w-20 h-2 bg-gray-700 rounded-full">
-                        <motion.div
-                          className="h-full bg-gradient-to-r from-green-400 to-blue-500 rounded-full"
-                          initial={{ width: 0 }}
-                          animate={{ width: `${result.habitabilityScore}%` }}
-                          transition={{ duration: 1, delay: 0.8 }}
-                        />
+                  {/* Blurred overlay for non-confirmed results */}
+                  {(result.type === "candidate" ||
+                    result.type === "false-positive") && (
+                    <div className="mt-6 p-4 bg-gray-800/50 rounded-lg border border-gray-700 relative">
+                      <div
+                        className="blur-sm pointer-events-none"
+                        style={{ filter: "blur(5px)" }}
+                      >
+                        <h4 className="text-lg text-white mb-3">
+                          Habitability Calculator
+                        </h4>
+                        <div className="space-y-2">
+                          <div className="grid grid-cols-5 gap-2">
+                            <input
+                              disabled
+                              className="bg-gray-700 text-gray-400 px-2 py-1 rounded text-sm"
+                              placeholder="Radius"
+                            />
+                            <input
+                              disabled
+                              className="bg-gray-700 text-gray-400 px-2 py-1 rounded text-sm"
+                              placeholder="Mass"
+                            />
+                            <input
+                              disabled
+                              className="bg-gray-700 text-gray-400 px-2 py-1 rounded text-sm"
+                              placeholder="Period"
+                            />
+                            <input
+                              disabled
+                              className="bg-gray-700 text-gray-400 px-2 py-1 rounded text-sm"
+                              placeholder="St. Mass"
+                            />
+                            <input
+                              disabled
+                              className="bg-gray-700 text-gray-400 px-2 py-1 rounded text-sm"
+                              placeholder="St. Temp"
+                            />
+                          </div>
+                          <button
+                            disabled
+                            className="w-full bg-gray-600 text-gray-400 py-1 rounded text-sm"
+                          >
+                            Calculate
+                          </button>
+                        </div>
+                      </div>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="bg-gray-900/80 px-4 py-2 rounded-lg text-yellow-400 text-sm font-semibold">
+                          Only available for confirmed exoplanets
+                        </span>
                       </div>
                     </div>
-                  </div> */}
+                  )}
                 </div>
               </div>
 

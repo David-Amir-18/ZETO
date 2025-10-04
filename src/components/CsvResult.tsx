@@ -30,7 +30,6 @@ const CSVResultsPage = () => {
    */
   const handleDownload = () => {
     if (!result) return;
-    console.log("Preparing to download results as CSV:", result);
     // Convert result to CSV format
     const csvData = Array.isArray(result) ? result : [result];
 
@@ -80,8 +79,6 @@ const CSVResultsPage = () => {
 
     const results = Array.isArray(result) ? result : [result];
 
-    console.log("Calculating stats from results:", results);
-
     return {
       total: results.length,
 
@@ -98,7 +95,6 @@ const CSVResultsPage = () => {
   };
 
   const stats = getSummaryStats();
-  console.log("Summary stats:", stats);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 flex items-center justify-center p-6">
